@@ -84,20 +84,16 @@ namespace Animales
             var tipoNuevo = (<HTMLSelectElement>document.getElementById("tipo")).value;
             var tablaMascotas = (<HTMLTableElement>document.getElementById("tablaMascotas"));
 
-            console.log(tablaMascotas.childNodes[2].childNodes[2])
-            // tablaMascotas.childNodes[2].childNodes[2].forEach(element => {
-            //     console.log(element)
-            //     console.log(element.childNodes)
-
-            //     if (element.childNodes[2].textContent==idMascota)
-            //     {
-            //         console.log(globalTr)
-            //         globalTr=element;
-            //         console.log(globalTr)
-
-            //         return;
-            //     }
-            // });
+            tablaMascotas.childNodes.forEach(element => {
+                if(element.nodeName=="TR")
+                {
+                    if(element.childNodes[2].textContent==idMascota)
+                    {
+                        globalTr=element;
+                        return;
+                    }
+                }           
+            });                
 
             listaMascotas.forEach(mascota => {
                 if(mascota.getId()==idMascota)
