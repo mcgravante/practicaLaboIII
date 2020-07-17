@@ -1,7 +1,8 @@
 namespace Animales
 {
     var listaMascotas: Array<Mascota> = new Array <Mascota>();
-
+    var mascotaSeleccionada : boolean = false;
+    var globalTr : any;
     function CalcularId()
     {
         var id : number = 1;
@@ -75,9 +76,78 @@ namespace Animales
 
     export function Modificar ()
     {
-        var tablaCoincidencias = (<HTMLTableElement>document.getElementById("tablaCoincidencias")); 
- 
+        if(mascotaSeleccionada)
+        {
+            var idMascota = globalTr.childNodes[2].innerHTML;
+            var nombreNuevo = (<HTMLInputElement>document.getElementById("nombre")).value;
+            var atributoNuevo=(<HTMLInputElement>document.getElementById("atributo")).value;
+            var tipoNuevo = (<HTMLSelectElement>document.getElementById("tipo")).value;
+            var tablaMascotas = (<HTMLTableElement>document.getElementById("tablaMascotas"));
+
+            console.log(tablaMascotas.childNodes[2].childNodes[2])
+            // tablaMascotas.childNodes[2].childNodes[2].forEach(element => {
+            //     console.log(element)
+            //     console.log(element.childNodes)
+
+            //     if (element.childNodes[2].textContent==idMascota)
+            //     {
+            //         console.log(globalTr)
+            //         globalTr=element;
+            //         console.log(globalTr)
+
+            //         return;
+            //     }
+            // });
+
+            listaMascotas.forEach(mascota => {
+                if(mascota.getId()==idMascota)
+                {
+
+                    if (tipoNuevo == "Gato")
+                    {
+                        var vidas = parseInt(atributoNuevo);
+                        if (vidas.toString() != "NaN")
+                        {
+                            (<Gato>mascota).setCantidadVidas(vidas)
+                            globalTr.childNodes[1].innerHTML=atributoNuevo;
+                            mascota.setNombre(nombreNuevo);
+                            globalTr.childNodes[0].innerHTML=nombreNuevo;
+                        }
+                        else{
+                            alert("debe ser un numero")
+                        }
+                    }
+                    else if (tipoNuevo == "Perro")
+                    {
+                        var raza = atributoNuevo;
+                        (<Perro>mascota).setRaza(raza);
+                        globalTr.childNodes[1].innerHTML=atributoNuevo;
+                        mascota.setNombre(nombreNuevo);
+                        globalTr.childNodes[0].innerHTML=nombreNuevo;
+                    }
+                    else if (tipoNuevo == "Pajaro")
+                    {
+                        if ((<any>Object).values(eTipo).includes(atributoNuevo)) 
+                        {
+                        var tipoDePajaro : eTipo = (<any>eTipo)[atributoNuevo];
+                        (<Pajaro>mascota).setTipo(tipoDePajaro);
+                        globalTr.childNodes[1].innerHTML=atributoNuevo;
+                        mascota.setNombre(nombreNuevo);
+                        globalTr.childNodes[0].innerHTML=nombreNuevo;
+                        }
+                        else {
+                            alert("debe ser un tipo válido de pájaro")
+                        }
+                    }
+                    mascotaSeleccionada=false;
+                    return;
+                }
+            });
         }
+        else{
+            alert("seleccione mascota");
+        }
+    }
     
 
     export function Eliminar()
@@ -140,9 +210,18 @@ namespace Animales
         td3.appendChild(document.createTextNode((id.toString())));
         tr.appendChild(td3);
         td3.hidden=true;
-        //tr.addEventListener("dblclick", AbrirRcuadro);
+        tr.addEventListener("dblclick", fillData);
         tabla.appendChild(tr); 
-    }   
+    }
+    
+    export function fillData(tr:any)
+    {
+        var trForFilling = tr.target.parentNode;
+        globalTr=trForFilling;
+        mascotaSeleccionada=true, 
+        (<HTMLInputElement>document.getElementById("nombre")).value=trForFilling.childNodes[0].innerHTML;
+        (<HTMLInputElement>document.getElementById("atributo")).value=trForFilling.childNodes[1].innerHTML;
+    }
 
 
 

@@ -1,6 +1,8 @@
 var Animales;
 (function (Animales) {
     var listaMascotas = new Array();
+    var mascotaSeleccionada = false;
+    var globalTr;
     function CalcularId() {
         var id = 1;
         if (listaMascotas.length != 0) {
@@ -58,7 +60,65 @@ var Animales;
     }
     Animales.Guardar = Guardar;
     function Modificar() {
-        var tablaCoincidencias = document.getElementById("tablaCoincidencias");
+        if (mascotaSeleccionada) {
+            var idMascota = globalTr.childNodes[2].innerHTML;
+            var nombreNuevo = document.getElementById("nombre").value;
+            var atributoNuevo = document.getElementById("atributo").value;
+            var tipoNuevo = document.getElementById("tipo").value;
+            var tablaMascotas = document.getElementById("tablaMascotas");
+            console.log(tablaMascotas.childNodes[2].childNodes[2]);
+            // tablaMascotas.childNodes[2].childNodes[2].forEach(element => {
+            //     console.log(element)
+            //     console.log(element.childNodes)
+            //     if (element.childNodes[2].textContent==idMascota)
+            //     {
+            //         console.log(globalTr)
+            //         globalTr=element;
+            //         console.log(globalTr)
+            //         return;
+            //     }
+            // });
+            listaMascotas.forEach(function (mascota) {
+                if (mascota.getId() == idMascota) {
+                    if (tipoNuevo == "Gato") {
+                        var vidas = parseInt(atributoNuevo);
+                        if (vidas.toString() != "NaN") {
+                            mascota.setCantidadVidas(vidas);
+                            globalTr.childNodes[1].innerHTML = atributoNuevo;
+                            mascota.setNombre(nombreNuevo);
+                            globalTr.childNodes[0].innerHTML = nombreNuevo;
+                        }
+                        else {
+                            alert("debe ser un numero");
+                        }
+                    }
+                    else if (tipoNuevo == "Perro") {
+                        var raza = atributoNuevo;
+                        mascota.setRaza(raza);
+                        globalTr.childNodes[1].innerHTML = atributoNuevo;
+                        mascota.setNombre(nombreNuevo);
+                        globalTr.childNodes[0].innerHTML = nombreNuevo;
+                    }
+                    else if (tipoNuevo == "Pajaro") {
+                        if (Object.values(Animales.eTipo).includes(atributoNuevo)) {
+                            var tipoDePajaro = Animales.eTipo[atributoNuevo];
+                            mascota.setTipo(tipoDePajaro);
+                            globalTr.childNodes[1].innerHTML = atributoNuevo;
+                            mascota.setNombre(nombreNuevo);
+                            globalTr.childNodes[0].innerHTML = nombreNuevo;
+                        }
+                        else {
+                            alert("debe ser un tipo válido de pájaro");
+                        }
+                    }
+                    mascotaSeleccionada = false;
+                    return;
+                }
+            });
+        }
+        else {
+            alert("seleccione mascota");
+        }
     }
     Animales.Modificar = Modificar;
     function Eliminar() {
@@ -113,8 +173,16 @@ var Animales;
         td3.appendChild(document.createTextNode((id.toString())));
         tr.appendChild(td3);
         td3.hidden = true;
-        //tr.addEventListener("dblclick", AbrirRcuadro);
+        tr.addEventListener("dblclick", fillData);
         tabla.appendChild(tr);
     }
     Animales.ConstruirFila = ConstruirFila;
+    function fillData(tr) {
+        var trForFilling = tr.target.parentNode;
+        globalTr = trForFilling;
+        mascotaSeleccionada = true,
+            document.getElementById("nombre").value = trForFilling.childNodes[0].innerHTML;
+        document.getElementById("atributo").value = trForFilling.childNodes[1].innerHTML;
+    }
+    Animales.fillData = fillData;
 })(Animales || (Animales = {}));
